@@ -1,0 +1,109 @@
+﻿﻿@using Microsoft.AspNetCore.Http
+@using System.Diagnostics
+@using PostManagement.Controllers
+@model IEnumerable<PostManagement.Models.Posts>
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    ViewData["Title"] = "Index";
+    string? email = @HttpContextAccessor.HttpContext?.Session.GetString(AuthenController.SessionEmail);
+}
+
+<h1>Index</h1>
+
+<p>
+    @if (!string.IsNullOrEmpty(email))
+    {
+        <a asp-action="Create">Create New</a>
+    }
+</p>
+
+<form asp-page="/Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by Title:
+            <input type="text" name="searchTitle" value="@ViewData["searchTitle"]" />
+
+            Content:
+            <input type="text" name="searchContent" value="@ViewData["searchContent"]" />
+
+            Start Date:
+            <input type="date" name="searchStartDate" value="@ViewData["searchStartDate"]" />
+
+            End Date:
+            <input type="date" name="searchEndDate" value="@ViewData["searchEndDate"]" />
+
+            <input type="submit" value="Search" class="btn btn-primary" /> |
+            <a asp-page="/Index">Back to full List</a>
+        </p>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.CreateDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UpdateDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Content)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PublishStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Users)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PostCategories)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    @* <tbody id="tableBody"> *@
+    @* </tbody> *@
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreateDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UpdateDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Content)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PublishStatus)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Users.FullName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PostCategories.CategoryName)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.PostId">Details</a> |
+                    @if (email != null && email.Equals(item.Users.Email))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.PostId">Edit</a>
+                        <span> | </span>
+                        <a asp-action="Delete" asp-route-id="@item.PostId">Delete</a>
+                    }
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
